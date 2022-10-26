@@ -1,0 +1,30 @@
+{
+  "name": "nodejs-parking-system-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.14.186",
+    "@types/node": "^18.11.5",
+    "@types/uuid": "^8.3.4",
+    "ts-node": "^10.9.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.8.4",
+    "uuid": "^9.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.196.0",
+    "@aws-sdk/lib-dynamodb": "^3.196.0",
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
+    "dynamo-converters": "^6.1.9",
+    "jose": "^4.10.3",
+    "lodash": "^4.17.21"
+  }
+}
