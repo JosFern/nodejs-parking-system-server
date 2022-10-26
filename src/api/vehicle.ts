@@ -13,7 +13,7 @@ export const vehicleRequest = async (req: IncomingMessage) => {
     try {
         let response: returnMessage = { code: 200, message: "" }
 
-        const result = getPathParams(req.url as string, '/slot/:id')
+        const result = getPathParams(req.url as string, '/vehicle/:id')
 
         switch (req.method) {
             case 'POST':
