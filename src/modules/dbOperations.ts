@@ -32,6 +32,8 @@ export abstract class dbOperations {
     insertData = async () => {
         const { TABLE } = this.data
 
+        console.log(this.data);
+
         const newData = this.filterData(this.data)
 
         const fields = keys(newData)

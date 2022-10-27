@@ -20,6 +20,25 @@ export const slotRequest = async (req: IncomingMessage) => {
         const query: any = getQueryParams(req)
 
         switch (req.method) {
+            case 'POST':
+                {
+                    const data: any = await getJSONDataFromRequestStream(req)
+
+                    const { slotNumber, slotType, slotPosition } = data
+
+                    console.log(data);
+
+                    console.log(req.url);
+
+                    const model = new slot(undefined, slotNumber, slotType, slotPosition, '', 'available')
+
+                    model.insertData()
+
+                    response = { ...response, code: 201, message: "slot successfully created" }
+
+                    return response
+                }
+
             case 'PUT':
                 {
                     //DECRYPT DATA
@@ -43,6 +62,7 @@ export const slotRequest = async (req: IncomingMessage) => {
                         result.id,
                         slots[0].slotNumber,
                         slots[0].slotType,
+                        slots[0].slotPosition,
                         vehicle,
                         status
                     )

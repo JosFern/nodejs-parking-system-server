@@ -18,6 +18,7 @@ export const insertDB = async (tableName: string, statement: string, parameters:
         Statement: `INSERT INTO ${tableName} VALUE ${statement}`,
         Parameters: values(dataToItem(parameters))
     };
+
     await execute(params)
     return "Successfully Save"
 };
