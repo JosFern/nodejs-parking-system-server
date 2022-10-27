@@ -7,10 +7,10 @@ export const encryptToken = async (data: object) => {
     const jwt = await new jose.SignJWT({ 'urn:example:claim': true, 'sub': JSON.stringify(data) })
         .setProtectedHeader({ alg: "HS256", typ: "JWT" })
         .setIssuedAt()
-        .setIssuer('ssts')
-        .setAudience('ssts')
+        .setIssuer('ps')
+        .setAudience('ps')
         .setExpirationTime('2h')
-        .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_KEY))
+        .sign(new TextEncoder().encode(process.env.SECRET_KEY))
 
     return jwt
 }
@@ -19,9 +19,14 @@ export const validateToken = async (token: string) => {
 
     if (token === undefined || token === '') return 400 //no token, not allowed
 
+    console.log(token);
+    console.log(process.env.SECRET_KEY);
+
+
+
     const { payload }: any = await jose.jwtVerify(token, new TextEncoder().encode(process.env.SECRET_KEY), {
-        issuer: 'parkingsystem',
-        audience: 'parkingsystem',
+        issuer: 'ps',
+        audience: 'ps',
     }).catch(err => {
         console.log(err);
         return err

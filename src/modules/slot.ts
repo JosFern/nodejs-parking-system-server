@@ -3,9 +3,9 @@ import { dbOperations } from './dbOperations';
 import { v4 as uuidv4 } from 'uuid';
 
 export class slot extends dbOperations {
-    private readonly id: string
-    private readonly slotNumber: string
-    private readonly slotType: number
+    public readonly id: string
+    public readonly slotNumber: string
+    public readonly slotType: number
     private slotPosition: number[]
     private vehicle: string
     private status: "available" | "occupied" | "leave"
@@ -37,4 +37,11 @@ export class slot extends dbOperations {
             TABLE: includes(this.id, "test") ? "TestSlot" : this.TABLE
         })
     }
+
+    getSlotPosition = () => this.slotPosition
+
+    getVehicle = () => this.vehicle
+
+    getStatus = () => this.status
+
 }

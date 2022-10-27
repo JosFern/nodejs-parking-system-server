@@ -1,21 +1,26 @@
-import { chain, filter } from "lodash"
+import { chain, filter, sortBy } from "lodash"
 import { selectDB } from "../lib/database/query"
 
 export const getAvailableSlot = async (entry: number, car: number) => {
 
-    const slots = await selectDB('Slot')
+    const slots: any = await selectDB('Slot')
 
-    const getSlotsEntryPosition = chain(slots)
-        .filter((slot) => slot.vehicle === null && car <= slot.type)
+    const sortedSlots = sortBy(slots, [function (slot) {
+        return Number(slot.slotNumber.substring(1))
+    }])
+
+    const getSlotsEntryPosition = chain(sortedSlots)
+        .filter((slot) => slot.vehicle === "" && car <= slot.slotType)
         .map(function (slot) {
-            return slot.position[entry]
+            return slot.slotPosition[entry]
         }).value()
 
     const nearSlot = filter(slots, (slot) =>
-        slot.position[entry] === Math.min(...getSlotsEntryPosition) &&
-        slot.vehicle === null &&
-        car <= slot.type
+        slot.slotPosition[entry] === Math.min(...getSlotsEntryPosition) &&
+        slot.vehicle === "" &&
+        car <= slot.slotType
     )
+    console.log(nearSlot);
 
-    return nearSlot[0].number
+    return nearSlot[0]
 }

@@ -3,6 +3,7 @@ import { getJSONDataFromRequestStream, getPathParams } from "../util/generatePar
 import { encryptToken, validateToken } from "../util/genarateToken";
 import { selectDB } from "../lib/database/query";
 import { vehicle } from "../modules/vehicle";
+import { find, map } from "lodash";
 
 interface returnMessage {
     code: number
@@ -23,10 +24,10 @@ export const vehicleRequest = async (req: IncomingMessage) => {
 
                     const validateData = await validateToken(data)
 
-                    const { plateNo, vehicleType, timeIn, timeOut } = validateData
+                    const { plateNo, vehicleType, timeIn } = validateData
 
                     //INSERTING VEHICLE DATA
-                    const model = new vehicle(undefined, plateNo, vehicleType, timeIn, timeOut)
+                    const model = new vehicle(undefined, plateNo, vehicleType, timeIn, '')
 
                     await model.insertData()
 
@@ -74,8 +75,17 @@ export const vehicleRequest = async (req: IncomingMessage) => {
                     //QUERY VEHICLES
                     const vehicles: any = await selectDB('Vehicle')
 
+                    const slots: any = await selectDB('Slot')
+
+                    const vehicleInfo = map(vehicles, (v) => {
+                        const slotInfo = find(slots, { vehicle: v.plateNo })
+                        return { ...v, ...slotInfo, vehicleID: v.id }
+                    })
+                    console.log(vehicleInfo);
+
+
                     //ENCRYPT COMPANIES
-                    const jwt = await encryptToken(vehicles)
+                    const jwt = await encryptToken(vehicleInfo)
 
                     response = { ...response, message: jwt }
 

@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { differenceInDays, differenceInHours, differenceInMinutes, parseISO } from 'date-fns';
 
 export class vehicle extends dbOperations {
-    private readonly id: string
-    private readonly plateNo: string
-    private readonly vehicleType: string
+    public readonly id: string
+    public readonly plateNo: string
+    public readonly vehicleType: number
     private timeIn: string
     private timeOut: string
     private readonly TABLE = "Vehicle"
@@ -14,7 +14,7 @@ export class vehicle extends dbOperations {
     constructor(
         id: string | undefined,
         plateNo: string,
-        vehicleType: string,
+        vehicleType: number,
         timeIn: string,
         timeOut: string
     ) {
@@ -34,6 +34,10 @@ export class vehicle extends dbOperations {
             TABLE: includes(this.id, "test") ? "TestVehicle" : this.TABLE
         })
     }
+
+    getTimeIn = () => this.timeIn
+
+    getTimeOut = () => this.timeOut
 
     calculateTotalPayment = async (slotType: number) => {
 

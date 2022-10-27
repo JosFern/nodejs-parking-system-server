@@ -10,12 +10,12 @@ export abstract class dbOperations {
 
     private data: object | any
 
-    assignData = (modelData: object) => {
+    protected assignData = (modelData: object) => {
         this.data = { ...modelData }
     }
 
     //CUT OUT TABLE, PRIMARY AND SECONDAY KEY IN OBJECT
-    filterData = (data: object | any, schemas: keySchema[] = []) => {
+    private filterData = (data: object | any, schemas: keySchema[] = []) => {
         const getVal = map(schemas, schema => values(schema)[0])
         const newData = keys(data)
             .filter(key => {

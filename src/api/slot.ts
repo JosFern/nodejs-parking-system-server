@@ -4,6 +4,7 @@ import { encryptToken, validateToken } from "../util/genarateToken";
 import { selectDB } from "../lib/database/query";
 import { slot } from "../modules/slot";
 import { getAvailableSlot } from "../util/getAvailableSlot";
+import { keys, sortBy } from "lodash";
 
 interface returnMessage {
     code: number
@@ -20,24 +21,24 @@ export const slotRequest = async (req: IncomingMessage) => {
         const query: any = getQueryParams(req)
 
         switch (req.method) {
-            case 'POST':
-                {
-                    const data: any = await getJSONDataFromRequestStream(req)
+            // case 'POST':
+            //     {
+            //         const data: any = await getJSONDataFromRequestStream(req)
 
-                    const { slotNumber, slotType, slotPosition } = data
+            //         const { slotNumber, slotType, slotPosition } = data
 
-                    console.log(data);
+            //         console.log(data);
 
-                    console.log(req.url);
+            //         console.log(req.url);
 
-                    const model = new slot(undefined, slotNumber, slotType, slotPosition, '', 'available')
+            //         const model = new slot(undefined, slotNumber, slotType, slotPosition, '', 'available')
 
-                    model.insertData()
+            //         model.insertData()
 
-                    response = { ...response, code: 201, message: "slot successfully created" }
+            //         response = { ...response, code: 201, message: "slot successfully created" }
 
-                    return response
-                }
+            //         return response
+            //     }
 
             case 'PUT':
                 {
@@ -78,12 +79,16 @@ export const slotRequest = async (req: IncomingMessage) => {
             case 'GET':
                 {
 
-                    if (!query) {
+                    if (keys(query).length === 0) {
                         //QUERY SLOTS
                         const slots: any = await selectDB('Slot')
 
+                        const sortedSlots = sortBy(slots, [function (slot) {
+                            return Number(slot.slotNumber.substring(1))
+                        }])
+
                         //ENCRYPT SLOTS
-                        const jwt = await encryptToken(slots)
+                        const jwt = await encryptToken(sortedSlots)
 
                         response = { ...response, message: jwt }
 
@@ -91,7 +96,10 @@ export const slotRequest = async (req: IncomingMessage) => {
 
                     } else {
 
-                        const availableSlot = getAvailableSlot(query.entry, query.vehicleType)
+                        const availableSlot = await getAvailableSlot(
+                            Number(query.entry),
+                            Number(query.vehicleType)
+                        )
 
                         const jwt = await encryptToken(availableSlot)
 

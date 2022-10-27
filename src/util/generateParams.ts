@@ -10,6 +10,7 @@ export const getJSONDataFromRequestStream = (req: IncomingMessage) => new Promis
 
 export const getQueryParams = (req: IncomingMessage) => {
     const requestURL = url.parse(req.url as string, true)
+
     return requestURL.query ? requestURL.query : {}
 }
 
