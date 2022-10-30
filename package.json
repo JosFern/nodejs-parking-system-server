@@ -7,7 +7,8 @@
     "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "test": "jest",
     "table-slot": "ts-node src/table/slotTable.ts",
-    "table-vehicle": "ts-node src/table/vehicleTable.ts"
+    "table-vehicle": "ts-node src/table/vehicleTable.ts",
+    "table-entry": "ts-node src/table/entry.ts"
   },
   "author": "",
   "license": "ISC",

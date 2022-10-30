@@ -1,6 +1,6 @@
 import { IncomingMessage } from "http";
-import { getJSONDataFromRequestStream, getPathParams } from "../util/generateParams";
-import { encryptToken, validateToken } from "../util/genarateToken";
+import { getPathParams } from "../util/generateParams";
+import { encryptToken } from "../util/genarateToken";
 import { selectDB } from "../lib/database/query";
 import { vehicle } from "../modules/vehicle";
 
@@ -18,15 +18,17 @@ export const paymentRequest = async (req: IncomingMessage) => {
         switch (req.method) {
             case 'GET':
                 {
-                    // QUERY SLOT
+                    // QUERY VEHICLE
                     const vehicles: any = await selectDB('Vehicle', `id='${result.id}'`)
 
-                    if (vehicles.length === 0) return { code: 404, message: "slot not found" }
+                    if (vehicles.length === 0) return { code: 404, message: "vehicle not found" }
 
                     //QUERY SLOT
                     const statement = `vehicle='${result.id}'`
 
-                    const slot = selectDB('Slot', statement)
+                    const slot: any = await selectDB('Slot', statement)
+
+                    if (slot.length === 0) return { code: 404, message: "slot not found" }
 
                     const model = new vehicle(
                         result.id,

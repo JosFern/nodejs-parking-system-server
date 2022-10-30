@@ -30,9 +30,5 @@ export const getPathParams = (url: string, path: string) => {
             params[pathParam[1]] = explodeURL[index]
         }
     })
-
-    console.log(params);
-
-
     return params
 }

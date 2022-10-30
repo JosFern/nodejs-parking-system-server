@@ -1,4 +1,5 @@
 import { createServer, IncomingMessage, ServerResponse } from "http"
+import { entryRequest } from "./api/entry"
 import { paymentRequest } from "./api/payment"
 import { slotRequest } from "./api/slot"
 import { vehicleRequest } from "./api/vehicle"
@@ -49,6 +50,13 @@ const listener = async (req: IncomingMessage, res: ServerResponse) => {
                 console.log(JSON.stringify(result));
 
             }
+
+        }
+
+        if ((req.url as string).match('/entry(.*?)')) {
+
+            result = await entryRequest(req) as string | object
+            console.log(JSON.stringify(result));
 
         }
 
