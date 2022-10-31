@@ -63,12 +63,14 @@ export const slotRequest = async (req: IncomingMessage) => {
                         result.id,
                         slots[0].slotNumber,
                         slots[0].slotType,
+                        slots[0].slotCoordinates,
                         slots[0].slotPosition,
+                        slots[0].entryDistance,
                         vehicle,
                         status
                     )
 
-                    model.updateData()
+                    await model.updateData()
 
                     response = { ...response, message: "slot successfully updated" }
 
@@ -96,8 +98,13 @@ export const slotRequest = async (req: IncomingMessage) => {
 
                     } else {
 
+                        //QUERY ENTRY IF EXIST
+                        const entryResult = await selectDB('Entry', `entryGate='${query.entry}'`)
+
+                        if (entryResult.length === 0) return { code: 404, message: "entry not found" }
+
                         const availableSlot = await getAvailableSlot(
-                            Number(query.entry),
+                            query.entry,
                             Number(query.vehicleType)
                         )
 

@@ -1,13 +1,14 @@
-import { find, includes, map } from 'lodash';
+import { find, includes, map, sortBy } from 'lodash';
 import { dbOperations } from './dbOperations';
 import { v4 as uuidv4 } from 'uuid';
-import { selectDB } from 'src/lib/database/query';
+import { selectDB } from '../lib/database/query';
 import { slot } from './slot';
+import { generateUnitDistance } from '../util/generateUnitDistance';
 
 export class entry extends dbOperations {
     public readonly id: string
     public readonly entryGate: string
-    public readonly entryNumber: number
+    public readonly entryNumber: number // THIS IS NOT USED ANYMORE SINCE UPDATED //REPLACED BY entryGate
     public readonly nearestSlot: string
     private readonly TABLE = "Entry"
 
@@ -37,30 +38,40 @@ export class entry extends dbOperations {
         //QUERY SLOTS
         const slots: any = await selectDB('Slot')
 
-        //GET THE NEAREST SLOT OF THE ENTRY
-        const origin = find(slots, { slotNumber: this.nearestSlot })
+        //SORT SLOTS BY SLOTNUMBER
+        const sortedSlots = sortBy(slots, [function (slot) {
+            return Number(slot.slotNumber.substring(1))
+        }])
 
-        map(slots, async (s) => {
+        //GET THE NEAREST SLOT OF THE ENTRY
+        const origin = find(sortedSlots, { slotNumber: this.nearestSlot })
+
+        map(sortedSlots, async (s) => {
 
             //GET THE UNIT DISTANCE FROM EACH SLOT TO ORIGIN
             //REFER TO THE UNIT DISTANCE FORMULA
-            const getUnitDistance = Math.sqrt(
-                (origin.slotCoordinates.x - s.slotCoordinates.x) ** 2 +
-                (origin.slotCoordinates.y - s.slotCoordinates.y) ** 2
+            const unitDistance = generateUnitDistance(
+                s.slotCoordinates.x,
+                origin.slotCoordinates.x,
+                s.slotCoordinates.y,
+                origin.slotCoordinates.y
             )
 
-            //ROUND THE UNIT DISTANCE BY 2 DECIMALS
-            const rounded = Math.round(getUnitDistance * 100) / 100
-
+            //ADD NEW DATA TO THE CURRENT SLOT
             const model = new slot(
                 s.id,
                 s.slotNumber,
                 s.slotType,
-                [...s.slotPosition, rounded],
+                s.slotCoordinates,
+                [...s.slotPosition],
+                { ...s.entryDistance, [this.entryGate]: unitDistance },
                 s.vehicle,
                 s.status
             )
 
+            // console.log(model.slotNumber, model.slotCoordinates, model.getEntryDistance());
+
+            //UPDATE SLOT
             await model.updateData()
         })
     }

@@ -1,5 +1,5 @@
 import { IncomingMessage } from "http";
-import { getJSONDataFromRequestStream } from "../util/generateParams";
+import { getJSONDataFromRequestStream, getPathParams } from "../util/generateParams";
 import { encryptToken, validateToken } from "../util/genarateToken";
 import { selectDB } from "../lib/database/query";
 import { entry } from "../modules/entry";
@@ -11,6 +11,9 @@ interface returnMessage {
 
 export const entryRequest = async (req: IncomingMessage) => {
     try {
+
+        const result = getPathParams(req.url as string, '/slot/:id')
+
         let response: returnMessage = { code: 200, message: "" }
 
         switch (req.method) {
@@ -20,16 +23,20 @@ export const entryRequest = async (req: IncomingMessage) => {
                     //DECRYPT DATA
                     const data: any = await getJSONDataFromRequestStream(req)
 
-                    const validateData = await validateToken(data)
+                    // const validateData = await validateToken(data)
 
-                    const { entryGate, nearestSlot } = validateData
+                    const { entryGate, nearestSlot } = data
 
                     //QUERY ENTRIES
-                    const entries: any = await selectDB('Entry')
+                    const entryQuery: any = await selectDB('Entry', `entryGate='${entryGate}'`)
 
-                    const model = new entry(undefined, entryGate, entries.length, nearestSlot)
+                    if (entryQuery.length > 0) return { code: 409, message: "entry gate already exist" }
 
-                    model.insertData()
+                    const model = new entry(undefined, entryGate, 0, nearestSlot)
+
+                    await model.insertData()
+
+                    await model.updateSlots()
 
                     response = { ...response, code: 201, message: 'entry successfully added' }
 
@@ -44,6 +51,28 @@ export const entryRequest = async (req: IncomingMessage) => {
                     const jwt = await encryptToken(entries)
 
                     response = { ...response, message: jwt }
+
+                    return response
+                }
+
+            case 'DELETE':
+                {
+                    //QUERY ENTRY
+                    const entryQuery: any = await selectDB('Entry', `id='${result.id}'`)
+
+                    if (entryQuery.length === 0) return { code: 404, message: "entry not found" }
+
+                    //DELETING ENTRY DATA
+                    const model = new entry(
+                        result.id,
+                        entryQuery[0].entryGate,
+                        entryQuery[0].entryNumber,
+                        entryQuery[0].nearestSlot
+                    )
+
+                    await model.deleteData()
+
+                    response = { ...response, message: "entry successfully deleted" }
 
                     return response
                 }

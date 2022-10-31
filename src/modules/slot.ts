@@ -6,7 +6,9 @@ export class slot extends dbOperations {
     public readonly id: string
     public readonly slotNumber: string
     public readonly slotType: number
-    private slotPosition: number[]
+    public readonly slotCoordinates: object
+    private slotPosition: number[]  //THIS IS NOT USED ANYMORE SINCE UPDATED //REPLACED BY entryDistance
+    private entryDistance: object
     private vehicle: string
     private status: "available" | "occupied" | "leave"
     private readonly TABLE = "Slot"
@@ -15,7 +17,9 @@ export class slot extends dbOperations {
         id: string | undefined,
         slotNumber: string,
         slotType: number,
+        slotCoordinates: object,
         slotPosition: number[],
+        entryDistance: object,
         vehicle: string,
         status: "available" | "occupied" | "leave"
     ) {
@@ -24,6 +28,8 @@ export class slot extends dbOperations {
         this.slotNumber = slotNumber
         this.slotType = slotType
         this.slotPosition = slotPosition
+        this.slotCoordinates = slotCoordinates
+        this.entryDistance = entryDistance
         this.vehicle = vehicle
         this.status = status
 
@@ -32,6 +38,8 @@ export class slot extends dbOperations {
             slotNumber: this.slotNumber,
             slotType: this.slotType,
             slotPosition: this.slotPosition,
+            slotCoordinates: this.slotCoordinates,
+            entryDistance: this.entryDistance,
             vehicle: this.vehicle,
             status: this.status,
             TABLE: includes(this.id, "test") ? "TestSlot" : this.TABLE
@@ -43,5 +51,7 @@ export class slot extends dbOperations {
     getVehicle = () => this.vehicle
 
     getStatus = () => this.status
+
+    getEntryDistance = () => this.entryDistance
 
 }
