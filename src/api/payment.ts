@@ -19,7 +19,7 @@ export const paymentRequest = async (req: IncomingMessage) => {
             case 'GET':
                 {
                     // QUERY VEHICLE
-                    const vehicles: any = await selectDB('Vehicle', `id='${result.id}'`)
+                    const vehicles: any = await selectDB('Vehicle', `plateNo='${result.id}'`)
 
                     if (vehicles.length === 0) return { code: 404, message: "vehicle not found" }
 
@@ -38,7 +38,9 @@ export const paymentRequest = async (req: IncomingMessage) => {
                         vehicles[0].timeOut
                     )
 
-                    const payment = await model.calculateTotalPayment(slot[0].slotType)
+                    const payment = model.calculateTotalPayment(slot[0].slotType)
+                    console.log(payment);
+
 
                     const jwt = await encryptToken({ payment })
 

@@ -40,6 +40,8 @@ export const vehicleRequest = async (req: IncomingMessage) => {
                 {
                     //DECRYPT DATA
                     const data: any = await getJSONDataFromRequestStream(req)
+                    console.log(data);
+
 
                     const validateData = await validateToken(data)
 

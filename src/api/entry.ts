@@ -3,6 +3,7 @@ import { getJSONDataFromRequestStream, getPathParams } from "../util/generatePar
 import { encryptToken, validateToken } from "../util/genarateToken";
 import { selectDB } from "../lib/database/query";
 import { entry } from "../modules/entry";
+import { sortBy } from "lodash";
 
 interface returnMessage {
     code: number
@@ -12,7 +13,7 @@ interface returnMessage {
 export const entryRequest = async (req: IncomingMessage) => {
     try {
 
-        const result = getPathParams(req.url as string, '/slot/:id')
+        const result = getPathParams(req.url as string, '/entry/:id')
 
         let response: returnMessage = { code: 200, message: "" }
 
@@ -23,9 +24,9 @@ export const entryRequest = async (req: IncomingMessage) => {
                     //DECRYPT DATA
                     const data: any = await getJSONDataFromRequestStream(req)
 
-                    // const validateData = await validateToken(data)
+                    const validateData = await validateToken(data)
 
-                    const { entryGate, nearestSlot } = data
+                    const { entryGate, nearestSlot } = validateData
 
                     //QUERY ENTRIES
                     const entryQuery: any = await selectDB('Entry', `entryGate='${entryGate}'`)
@@ -48,7 +49,11 @@ export const entryRequest = async (req: IncomingMessage) => {
                     // QUERY ENTRIES
                     const entries: any = await selectDB('Entry')
 
-                    const jwt = await encryptToken(entries)
+                    const sortedEntries = sortBy(entries, [function (entry) {
+                        return entry.entryGate
+                    }])
+
+                    const jwt = await encryptToken(sortedEntries)
 
                     response = { ...response, message: jwt }
 

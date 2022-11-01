@@ -7,7 +7,7 @@ export class slot extends dbOperations {
     public readonly slotNumber: string
     public readonly slotType: number
     public readonly slotCoordinates: object
-    private slotPosition: number[]  //THIS IS NOT USED ANYMORE SINCE UPDATED //REPLACED BY entryDistance
+    private slotPosition: number[]  //NOT USED ANYMORE SINCE UPDATED //REPLACED BY entryDistance
     private entryDistance: object
     private vehicle: string
     private status: "available" | "occupied" | "leave"

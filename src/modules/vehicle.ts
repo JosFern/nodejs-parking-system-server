@@ -39,7 +39,7 @@ export class vehicle extends dbOperations {
 
     getTimeOut = () => this.timeOut
 
-    calculateTotalPayment = async (slotType: number) => {
+    calculateTotalPayment = (slotType: number) => {
 
         const currTime = new Date();
 

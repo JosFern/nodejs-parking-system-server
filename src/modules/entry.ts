@@ -8,7 +8,7 @@ import { generateUnitDistance } from '../util/generateUnitDistance';
 export class entry extends dbOperations {
     public readonly id: string
     public readonly entryGate: string
-    public readonly entryNumber: number // THIS IS NOT USED ANYMORE SINCE UPDATED //REPLACED BY entryGate
+    public readonly entryNumber: number // NOT USED ANYMORE SINCE UPDATED //REPLACED BY entryGate
     public readonly nearestSlot: string
     private readonly TABLE = "Entry"
 
@@ -49,7 +49,6 @@ export class entry extends dbOperations {
         map(sortedSlots, async (s) => {
 
             //GET THE UNIT DISTANCE FROM EACH SLOT TO ORIGIN
-            //REFER TO THE UNIT DISTANCE FORMULA
             const unitDistance = generateUnitDistance(
                 s.slotCoordinates.x,
                 origin.slotCoordinates.x,

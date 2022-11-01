@@ -42,9 +42,7 @@ const listener = async (req: IncomingMessage, res: ServerResponse) => {
                 result = await paymentRequest(req) as string | object
                 console.log(JSON.stringify(result));
 
-            }
-
-            if ((req.url as string).match('/vehicle(.*?)')) {
+            } else if ((req.url as string).match('/vehicle(.*?)')) {
 
                 result = await vehicleRequest(req) as string | object
                 console.log(JSON.stringify(result));
