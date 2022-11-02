@@ -83,6 +83,7 @@ export const slotRequest = async (req: IncomingMessage) => {
             case 'GET':
                 {
 
+                    //GET ALL SLOTS DATA
                     if (keys(query).length === 0) {
                         //QUERY SLOTS
                         const slots: any = await selectDB('Slot')
@@ -99,6 +100,7 @@ export const slotRequest = async (req: IncomingMessage) => {
                         return response
 
                     } else {
+                        //GET AVAILABLE SLOT IN SLOTS IF THERE IS A QUERY PARAMS
 
                         //QUERY ENTRY IF EXIST
                         const entryResult = await selectDB('Entry', `entryGate='${query.entry}'`)
