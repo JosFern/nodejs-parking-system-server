@@ -3,8 +3,8 @@ import { getJSONDataFromRequestStream, getPathParams, getQueryParams } from "../
 import { encryptToken, validateToken } from "../util/genarateToken";
 import { selectDB } from "../lib/database/query";
 import { slot } from "../modules/slot";
-import { getAvailableSlot } from "../util/getAvailableSlot";
-import { keys, sortBy } from "lodash";
+import { filterSlots, getAvailableSlot } from "../util/getAvailableSlot";
+import { assign, keys, map, sortBy } from "lodash";
 
 interface returnMessage {
     code: number
@@ -88,12 +88,12 @@ export const slotRequest = async (req: IncomingMessage) => {
                         //QUERY SLOTS
                         const slots: any = await selectDB('Slot')
 
-                        const sortedSlots = sortBy(slots, [function (slot) {
-                            return Number(slot.slotNumber.substring(1))
-                        }])
+                        const filteredSlots = filterSlots(slots)
+
+                        console.log(filteredSlots);
 
                         //ENCRYPT SLOTS
-                        const jwt = await encryptToken(sortedSlots)
+                        const jwt = await encryptToken(filteredSlots)
 
                         response = { ...response, message: jwt }
 
