@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Jose Test Service Stack
+Resources:
+    JoseTestServiceApiGateway:
+        Type: AWS::Serverless::Api
+        Properties:
+            StageName: v1
+            EndpointConfiguration: REGIONAL
+    JoseTestServiceLambda:
+        Type: AWS::Serverless::Function
+        Properties:
+            MemorySize: 1024
+            Timeout: 900
+            Handler: dist/server/handler.handler
+            Runtime: nodejs20.x
+            CodeUri: .
+            Events:
+                JoseTestServiceApiGatewayTrigger:
+                    Type: Api
+                    Properties:
+                        Path: /{proxy+}
+                        Method: Any
+                        RestApiId:
+                            Ref: JoseTestServiceApiGateway
